@@ -16,7 +16,9 @@ const SharedLayout: FC = () => {
 				}
 			>
 				<Header />
-				<Outlet />
+				<Container>
+					<Outlet />
+				</Container>
 			</Suspense>
 		</LayoutStyled>
 	);
@@ -37,4 +39,8 @@ const LoaderWrapper = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+`;
+
+const Container = styled.div`
+	padding: 0 15px;
 `;
