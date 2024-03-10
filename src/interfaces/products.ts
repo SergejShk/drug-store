@@ -5,3 +5,7 @@ export interface IProduct {
 	createdAt: Date;
 	shopId: number;
 }
+
+export interface IOrderProduct extends IProduct {
+	count: number;
+}
