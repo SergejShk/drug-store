@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { FC } from "react";
 import styled from "styled-components";
 
 import Loader from "./Loader";
+
+import { useCartLocalStorage } from "../../hooks/useCartLocalStorage";
 
 import { IProduct } from "../../interfaces/products";
 
@@ -11,6 +14,20 @@ interface IProps {
 }
 
 const CardsList: FC<IProps> = ({ products, isLoading = false }) => {
+	const [data, setData] = useCartLocalStorage();
+
+	const handleAddToCart = (product: IProduct) => {
+		// @ts-ignore
+		setData((prev: IProduct[]) => [...prev, product]);
+	};
+
+	const isAddedToCart = (productId: number) => {
+		if (Array.isArray(data)) {
+			return data.some((item) => item.id === productId);
+		}
+		return false;
+	};
+
 	return (
 		<List $isLoading={isLoading}>
 			{isLoading && <Loader />}
@@ -21,7 +38,13 @@ const CardsList: FC<IProps> = ({ products, isLoading = false }) => {
 						<Photo src="empty-img.jpeg" alt="photo of product" />
 						<ProductName>{product.name}</ProductName>
 						<Price>{product.price} грн</Price>
-						<Button type="button">Add to cart</Button>
+						<Button
+							type="button"
+							onClick={() => handleAddToCart(product)}
+							disabled={isAddedToCart(product.id)}
+						>
+							{isAddedToCart(product.id) ? "In the cart" : "Add to cart"}
+						</Button>
 					</Item>
 				))}
 		</List>
@@ -76,5 +99,10 @@ const Button = styled.button`
 
 	&:hover {
 		background-color: #475ba2;
+	}
+
+	&:disabled {
+		cursor: auto;
+		background-color: #6b7fca;
 	}
 `;
