@@ -16,9 +16,18 @@ const CartPage: FC = () => {
 		setCartProducts((prev) => prev.filter((item) => item.id !== productId));
 	};
 
+	const resetCart = () => {
+		// @ts-ignore
+		setCartProducts([]);
+	};
+
 	return (
 		<CartPageStyled>
-			<CartForm products={(cartProducts as IProduct[]) || []} removeProductFromCart={removeProductFromCart} />
+			<CartForm
+				products={(cartProducts as IProduct[]) || []}
+				removeProductFromCart={removeProductFromCart}
+				resetCart={resetCart}
+			/>
 		</CartPageStyled>
 	);
 };

@@ -1,8 +1,10 @@
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import styled from "styled-components";
 
 import Input from "./Input";
+
+import { useCreateOrder } from "../../hooks/service/orders/useCreateOrder";
 
 import { IOrderProduct, IProduct } from "../../interfaces/products";
 
@@ -17,14 +19,18 @@ interface IFormValues {
 interface IProps {
 	products: IProduct[];
 	removeProductFromCart: (productId: number) => void;
+	resetCart: () => void;
 }
 
-const CartForm: FC<IProps> = ({ products, removeProductFromCart }) => {
+const CartForm: FC<IProps> = ({ products, removeProductFromCart, resetCart }) => {
+	const { mutate: createOrder, isPending, isSuccess } = useCreateOrder();
+
 	const {
 		control,
 		register,
 		handleSubmit,
 		setValue,
+		reset,
 		formState: { errors },
 	} = useForm<IFormValues>({
 		defaultValues: {
@@ -40,6 +46,14 @@ const CartForm: FC<IProps> = ({ products, removeProductFromCart }) => {
 		name: "products",
 		control,
 	});
+
+	useEffect(() => {
+		if (isSuccess) {
+			resetCart();
+			reset();
+			setValue("products", []);
+		}
+	}, [isSuccess, reset, resetCart, setValue]);
 
 	const onIncreaseClick = (productId: number) => {
 		const updatedProducts = productsData.map((product) => {
@@ -84,7 +98,7 @@ const CartForm: FC<IProps> = ({ products, removeProductFromCart }) => {
 	};
 
 	const onSaveClick = (formValues: IFormValues) => {
-		console.log(formValues);
+		createOrder(formValues);
 	};
 
 	return (
@@ -144,7 +158,7 @@ const CartForm: FC<IProps> = ({ products, removeProductFromCart }) => {
 				</UserBlock>
 
 				<Block>
-					{productsData.length &&
+					{!!productsData.length &&
 						productsData.map((product) => (
 							<ProductCard key={product.id}>
 								<Photo src="empty-img.jpeg" alt="photo of product" />
@@ -156,15 +170,21 @@ const CartForm: FC<IProps> = ({ products, removeProductFromCart }) => {
 										<CounterIncrease
 											type="button"
 											onClick={() => onIncreaseClick(product.id)}
+											disabled={isPending}
 										></CounterIncrease>
 										<CounterDecrease
 											type="button"
 											onClick={() => onDecreaseClick(product.id)}
+											disabled={isPending}
 										></CounterDecrease>
 									</Counter>
 								</ProductInfo>
 
-								<RemoveButton type="button" onClick={() => onRemoveProduct(product.id)} />
+								<RemoveButton
+									type="button"
+									onClick={() => onRemoveProduct(product.id)}
+									disabled={isPending}
+								/>
 							</ProductCard>
 						))}
 				</Block>
@@ -172,7 +192,9 @@ const CartForm: FC<IProps> = ({ products, removeProductFromCart }) => {
 
 			<FooterForm>
 				<TotalPrice>Total price: {totalPrice} грн</TotalPrice>
-				<Button type="submit">Submit</Button>
+				<Button type="submit" disabled={isPending}>
+					Submit
+				</Button>
 			</FooterForm>
 		</Form>
 	);
