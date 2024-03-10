@@ -7,7 +7,7 @@ import Loader from "../common/Loader";
 import { IShop } from "../../interfaces/shops";
 
 interface IProps {
-	shops?: IShop[];
+	shops: IShop[];
 	isLoading: boolean;
 }
 
@@ -18,8 +18,7 @@ const ShopsList: FC<IProps> = ({ shops, isLoading }) => {
 			<List>
 				{isLoading && <Loader />}
 
-				{!!shops &&
-					!isLoading &&
+				{!isLoading &&
 					shops.map((shop) => (
 						<Item key={shop.id}>
 							<NavLinkStyled to={String(shop.id)}>{shop.name}</NavLinkStyled>

@@ -1,9 +1,8 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
 
 import SharedLayout from "../common/SharedLayout";
-import CardsList from "../common/CardsList";
 
-import { ShopPage, CartPage } from "./pages";
+import { ShopPage, CartPage, ProductsByShop } from "./pages";
 
 export const router = createBrowserRouter([
 	{
@@ -17,7 +16,7 @@ export const router = createBrowserRouter([
 				children: [
 					{
 						path: ":shopId",
-						element: <CardsList />,
+						element: <ProductsByShop />,
 					},
 				],
 			},

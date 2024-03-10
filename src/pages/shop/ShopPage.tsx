@@ -5,7 +5,7 @@ import styled from "styled-components";
 import ShopsList from "../../components/shop/ShopsList";
 import Loader from "../../components/common/Loader";
 
-import { useGetShops } from "../../hooks/service/useGetShops";
+import { useGetShops } from "../../hooks/service/shops/useGetShops";
 
 const ShopPage: FC = () => {
 	const { data: shopsData, isFetching } = useGetShops();
@@ -19,7 +19,7 @@ const ShopPage: FC = () => {
 					</LoaderWrapper>
 				}
 			>
-				<ShopsList shops={shopsData?.data} isLoading={isFetching} />
+				<ShopsList shops={shopsData?.data || []} isLoading={isFetching} />
 
 				<Container>
 					<Outlet />
